@@ -4,6 +4,7 @@ using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody myRB;
+
     [Header("Player")]
     public GameObject currentPlayer;
     private GameObject player1;
@@ -13,6 +14,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("Player Variables")]
     public float moveDistance;
+    public float rayDistance;
+    public float moveDelayTimer;
+    private float moveDelayTimerInit;
 
     [Header("Player Booleans")]
     public bool canMove;
@@ -21,11 +25,16 @@ public class PlayerController : MonoBehaviour
     public bool isAttachedRight;
 
     [Header("Layer Masks")]
+    public LayerMask solidMask;
     public LayerMask attachMask;
 
 	void Start ()
     {
         myRB = GetComponent<Rigidbody>();
+
+        currentPlayer = gameObject;
+
+        moveDelayTimerInit = moveDelayTimer;
 	}
 	
 	void Update ()
@@ -33,14 +42,49 @@ public class PlayerController : MonoBehaviour
 	
 	}
 
-    public void Move()
+    public void Move(float xAxis, float yAxis)
     {
+        if (xAxis > 0)
+        {
+            moveDelayTimer -= Time.deltaTime;
 
+            if (moveDelayTimer < 0)
+            {
+                if (RequestMove(currentPlayer.transform.position + new Vector3(moveDistance, 0, 0)))
+                {
+                    transform.position += new Vector3(moveDistance, 0, 0);
+                    moveDelayTimer = moveDelayTimerInit;
+                }
+            }
+        }
+
+        if (xAxis < 0)
+        {
+            moveDelayTimer -= Time.deltaTime;
+
+            if (moveDelayTimer < 0)
+            {
+                if (RequestMove(currentPlayer.transform.position + new Vector3(-moveDistance, 0, 0)))
+                {
+                    transform.position += new Vector3(-moveDistance, 0, 0);
+                    moveDelayTimer = moveDelayTimerInit;
+                }
+            }
+        }
     }
+
 
     public void Attach()
     {
+        if (canAttach)
+        {
 
+        }
+
+        if (isAttachedLeft || isAttachedRight)
+        {
+
+        }
     }
 
     public void Switch()
@@ -50,24 +94,20 @@ public class PlayerController : MonoBehaviour
 
     void RaycastCheck()
     {
-        if (Physics.Raycast(transform.position, Vector3.left, moveDistance, attachMask))
-        {
+        
+    }
 
+    bool RequestMove (Vector3 RequestPosition)
+    {
+        if (!Physics.Raycast(currentPlayer.transform.position, RequestPosition, rayDistance, attachMask))
+        {
+            return true;
+        }
+        else
+        {
+            moveDelayTimer = moveDelayTimerInit;
+            return false;         
         }
 
-        if (Physics.Raycast(transform.position, Vector3.up, moveDistance, attachMask))
-        {
-
-        }
-
-        if (Physics.Raycast(transform.position, Vector3.right, moveDistance, attachMask))
-        {
-
-        }
-
-        if (Physics.Raycast(transform.position, Vector3.down, moveDistance, attachMask))
-        {
-
-        }
     }
 }

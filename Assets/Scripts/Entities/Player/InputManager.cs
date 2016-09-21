@@ -26,30 +26,12 @@ public class InputManager : MonoBehaviour
 
     public void CheckForInputs()
     {
-        xAxis = Input.GetAxis("Horizontal");
-        yAxis = Input.GetAxis("Vertical");
+        xAxis = Input.GetAxisRaw("Horizontal");
+        yAxis = Input.GetAxisRaw("Vertical");
 
         if (xAxis != 0 || yAxis != 0)
         {
-            if (xAxis > 0)
-            {
-
-            }
-
-            if (xAxis < 0)
-            {
-
-            }
-
-            if (yAxis > 0)
-            {
-
-            }
-
-            if (yAxis < 0)
-            {
-
-            }
+            playerController.Move(xAxis, yAxis);
         }
 
         if (Input.GetKeyDown(Attach))
