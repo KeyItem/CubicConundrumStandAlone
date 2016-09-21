@@ -7,20 +7,17 @@ public class PlayerController : MonoBehaviour
 
     [Header("Player")]
     public GameObject currentPlayer;
-    private GameObject player1;
-    private GameObject player2;
-    private GameObject player3;
-    private GameObject player4;
 
     [Header("Player Variables")]
     public float moveDistance;
     public float rayDistance;
-    public float moveDelayTimer;
-    private float moveDelayTimerInit;
+    public float inputDelayTimer;
+    private float inputDelayTimerInit;
 
     [Header("Player Booleans")]
     public bool canMove;
-    public bool canAttach;
+    public bool canSwitch;
+    public bool isAttached;
     public bool isAttachedLeft;
     public bool isAttachedRight;
 
@@ -28,46 +25,80 @@ public class PlayerController : MonoBehaviour
     public LayerMask solidMask;
     public LayerMask attachMask;
 
+    [Header("Debug")]
+    public Vector3[] directionVectors;
+
 	void Start ()
     {
-        myRB = GetComponent<Rigidbody>();
+        currentPlayer = gameObject.transform.GetChild(0).gameObject;
 
-        currentPlayer = gameObject;
+        myRB = currentPlayer.GetComponent<Rigidbody>();
 
-        moveDelayTimerInit = moveDelayTimer;
+        inputDelayTimerInit = inputDelayTimer;
 	}
 	
 	void Update ()
     {
-	
-	}
+       
+    }
 
     public void Move(float xAxis, float yAxis)
     {
         if (xAxis > 0)
         {
-            moveDelayTimer -= Time.deltaTime;
+            inputDelayTimer -= Time.deltaTime;
 
-            if (moveDelayTimer < 0)
+            if (inputDelayTimer < 0)
             {
-                if (RequestMove(currentPlayer.transform.position + new Vector3(moveDistance, 0, 0)))
+                if (RequestMove(Vector3.right))
                 {
-                    transform.position += new Vector3(moveDistance, 0, 0);
-                    moveDelayTimer = moveDelayTimerInit;
+                    currentPlayer.transform.position += new Vector3(moveDistance, 0, 0);
+                    inputDelayTimer = inputDelayTimerInit;
                 }
             }
         }
 
         if (xAxis < 0)
         {
-            moveDelayTimer -= Time.deltaTime;
+            inputDelayTimer -= Time.deltaTime;
 
-            if (moveDelayTimer < 0)
+            if (inputDelayTimer < 0)
             {
-                if (RequestMove(currentPlayer.transform.position + new Vector3(-moveDistance, 0, 0)))
+                if (RequestMove(Vector3.left))
                 {
-                    transform.position += new Vector3(-moveDistance, 0, 0);
-                    moveDelayTimer = moveDelayTimerInit;
+                    currentPlayer.transform.position += new Vector3(-moveDistance, 0, 0);
+                    inputDelayTimer = inputDelayTimerInit;
+                }
+            }
+        }
+
+        if (isAttached)
+        {
+            if (yAxis > 0)
+            {
+                inputDelayTimer -= Time.deltaTime;
+
+                if (inputDelayTimer < 0)
+                {
+                    if (RequestMove(Vector3.up))
+                    {
+                        currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
+                        inputDelayTimer = inputDelayTimerInit;
+                    }
+                }
+            }
+
+            if (yAxis < 0)
+            {
+                inputDelayTimer -= Time.deltaTime;
+
+                if (inputDelayTimer < 0)
+                {
+                    if (RequestMove(Vector3.down))
+                    {
+                        currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
+                        inputDelayTimer = inputDelayTimerInit;
+                    }
                 }
             }
         }
@@ -76,38 +107,67 @@ public class PlayerController : MonoBehaviour
 
     public void Attach()
     {
-        if (canAttach)
+      if (!isAttached)
         {
-
+           if (RequestAttach())
+            {
+                isAttached = true;
+                myRB.isKinematic = true;
+            }
         }
-
-        if (isAttachedLeft || isAttachedRight)
+        else
         {
-
+            Deattach();
         }
+    }
+
+    public void Deattach()
+    {
+        myRB.isKinematic = false;
+        isAttached = false;
+        isAttachedRight = false;
+        isAttachedLeft = false;
     }
 
     public void Switch()
     {
+        if (canSwitch)
+        {
 
+        }
     }
 
-    void RaycastCheck()
+    bool RequestMove (Vector3 requestedPosition)
     {
-        
-    }
-
-    bool RequestMove (Vector3 RequestPosition)
-    {
-        if (!Physics.Raycast(currentPlayer.transform.position, RequestPosition, rayDistance, attachMask))
+        if (!Physics.Raycast(currentPlayer.transform.position, requestedPosition, rayDistance, attachMask))
         {
             return true;
         }
         else
         {
-            moveDelayTimer = moveDelayTimerInit;
+            inputDelayTimer = inputDelayTimerInit;
             return false;         
         }
+    }
 
+    bool RequestAttach()
+    {
+        for (int i = 0; i < directionVectors.Length; i++)
+        {
+            if (Physics.Raycast(currentPlayer.transform.position, directionVectors[i], moveDistance, attachMask))
+            {           
+                if (i == 0)
+                {
+                    isAttachedRight = true;
+                }
+
+                if (i == 1)
+                {
+                    isAttachedLeft = true;
+                }
+                return true;
+            }
+        }
+        return false;
     }
 }
