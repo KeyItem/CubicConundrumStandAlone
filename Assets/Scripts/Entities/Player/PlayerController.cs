@@ -22,24 +22,26 @@ public class PlayerController : MonoBehaviour
     public bool isAttachedRight;
 
     [Header("Layer Masks")]
+    public LayerMask allMask;
     public LayerMask solidMask;
     public LayerMask attachMask;
 
     [Header("Debug")]
     public Vector3[] directionVectors;
+    public Renderer playerRenderer;
+    public Color selectedOutlineColor;
+    public Color attachedOutlineColor;
 
 	void Start ()
     {
-        currentPlayer = gameObject.transform.GetChild(0).gameObject;
-
-        myRB = currentPlayer.GetComponent<Rigidbody>();
+        SyncPlayer();
 
         inputDelayTimerInit = inputDelayTimer;
 	}
 	
 	void Update ()
     {
-       
+        CheckForWalls();
     }
 
     public void Move(float xAxis, float yAxis)
@@ -111,6 +113,8 @@ public class PlayerController : MonoBehaviour
         {
            if (RequestAttach())
             {
+                currentPlayer.transform.position = new Vector3(currentPlayer.transform.position.x, Mathf.Round(currentPlayer.transform.position.y), currentPlayer.transform.position.z);
+                AttachedOutline();
                 isAttached = true;
                 myRB.isKinematic = true;
             }
@@ -127,6 +131,7 @@ public class PlayerController : MonoBehaviour
         isAttached = false;
         isAttachedRight = false;
         isAttachedLeft = false;
+        SelectedOutline();
     }
 
     public void Switch()
@@ -139,7 +144,7 @@ public class PlayerController : MonoBehaviour
 
     bool RequestMove (Vector3 requestedPosition)
     {
-        if (!Physics.Raycast(currentPlayer.transform.position, requestedPosition, rayDistance, attachMask))
+        if (!Physics.Raycast(currentPlayer.transform.position, requestedPosition, rayDistance, allMask))
         {
             return true;
         }
@@ -169,5 +174,42 @@ public class PlayerController : MonoBehaviour
             }
         }
         return false;
+    }
+
+    void CheckForWalls()
+    {
+        if (isAttached)
+        {
+            for (int i = 0; i < directionVectors.Length; i++)
+            {
+                if (Physics.Raycast(currentPlayer.transform.position, directionVectors[i], moveDistance, attachMask))
+                {
+                    return;
+                }
+                if (i+1 == directionVectors.Length) //Thanks to Ryon (Need to confirm on how this works)
+                {
+                    Deattach();
+                }
+            }
+        }
+    }
+
+    public void SyncPlayer()
+    {
+        currentPlayer = gameObject.transform.GetChild(0).gameObject;
+     
+        myRB = currentPlayer.GetComponent<Rigidbody>();
+
+        playerRenderer = currentPlayer.GetComponent<Renderer>();
+    }
+
+    void SelectedOutline()
+    {
+        playerRenderer.material.SetColor("_OutlineColor", selectedOutlineColor);
+    }
+
+    void AttachedOutline()
+    {
+        playerRenderer.material.SetColor("_OutlineColor", attachedOutlineColor);
     }
 }

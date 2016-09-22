@@ -11,8 +11,6 @@ public class InputManager : MonoBehaviour
     [Header("Controls")]
     public KeyCode Attach;
     public KeyCode Switch;
-    [Header("Current Player")]
-    public GameObject currentPlayer;
 
 	void Awake ()
     {
@@ -41,7 +39,8 @@ public class InputManager : MonoBehaviour
 
         if (Input.GetKeyDown(Switch))
         {
-            playerController.Switch();
+            // playerController.Switch();
+            playerController.SyncPlayer();
         }
     }
 }
