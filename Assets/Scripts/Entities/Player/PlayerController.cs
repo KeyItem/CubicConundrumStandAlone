@@ -36,12 +36,12 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         switchManager = GetComponent<SwitchManager>();
+
+        SyncPlayer();
     }
 
-	void Start ()
+    void Start ()
     {
-        SyncPlayer();
-
         inputDelayTimerInit = inputDelayTimer;
 	}
 	
