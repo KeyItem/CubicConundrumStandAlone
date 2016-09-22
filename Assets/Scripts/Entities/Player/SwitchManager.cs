@@ -4,11 +4,20 @@ using System.Collections.Generic;
 
 public class SwitchManager : MonoBehaviour
 {
+    private PlayerController playerController;
+
     [Header ("Switch Variables")]
     public int numberOfCubesAvailable;
     public int currentCube;
 
     public List<GameObject> cubes;
+
+    public GameObject godObject;
+
+    void Awake()
+    {
+        playerController = GameObject.FindGameObjectWithTag("GodObject").GetComponent<PlayerController>();
+    }
 
 	void Start ()
     {
@@ -40,5 +49,23 @@ public class SwitchManager : MonoBehaviour
                 cubes.Add(GameObject.FindGameObjectWithTag("YellowCube"));
                 break;
         }
+    }
+
+    public void SwitchCube()
+    {
+        currentCube++;
+
+        if (currentCube > numberOfCubesAvailable)
+        {
+            currentCube = 1;
+        }
+
+        GameObject previousChild = godObject.transform.GetChild(0).gameObject;
+        previousChild.transform.SetParent(null);
+
+        cubes[currentCube].transform.SetParent(godObject.transform);
+
+        playerController.SyncPlayer();
+
     }
 }

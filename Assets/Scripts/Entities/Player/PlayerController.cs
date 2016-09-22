@@ -4,6 +4,7 @@ using System.Collections;
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody myRB;
+    private SwitchManager switchManager;
 
     [Header("Player")]
     public GameObject currentPlayer;
@@ -31,6 +32,11 @@ public class PlayerController : MonoBehaviour
     public Renderer playerRenderer;
     public Color selectedOutlineColor;
     public Color attachedOutlineColor;
+
+    void Awake()
+    {
+        switchManager = GameObject.FindGameObjectWithTag("SwitchManager").GetComponent<SwitchManager>();
+    }
 
 	void Start ()
     {
@@ -138,7 +144,7 @@ public class PlayerController : MonoBehaviour
     {
         if (canSwitch)
         {
-
+            switchManager.SwitchCube();
         }
     }
 
