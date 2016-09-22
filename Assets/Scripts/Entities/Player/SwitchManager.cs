@@ -13,17 +13,27 @@ public class SwitchManager : MonoBehaviour
     public List<GameObject> cubes;
 
     public GameObject godObject;
+    public GameObject cubeHolder;
 
     void Awake()
     {
         playerController = GameObject.FindGameObjectWithTag("GodObject").GetComponent<PlayerController>();
+
+        godObject = gameObject;
+
+        cubeHolder = GameObject.FindGameObjectWithTag("CubeHolder");
+
+        if (numberOfCubesAvailable > 1)
+        {
+            playerController.canSwitch = true;
+        }
     }
 
 	void Start ()
     {
         DefineCubeList();
 
-        currentCube = 1;
+        currentCube = 0;
 	}
 	
     public void DefineCubeList()
@@ -55,13 +65,14 @@ public class SwitchManager : MonoBehaviour
     {
         currentCube++;
 
-        if (currentCube > numberOfCubesAvailable)
+        if (currentCube > numberOfCubesAvailable - 1)
         {
-            currentCube = 1;
+            currentCube = 0;
         }
 
         GameObject previousChild = godObject.transform.GetChild(0).gameObject;
-        previousChild.transform.SetParent(null);
+        previousChild.transform.SetParent(cubeHolder.transform);
+        playerController.RemoveOutline(previousChild);
 
         cubes[currentCube].transform.SetParent(godObject.transform);
 

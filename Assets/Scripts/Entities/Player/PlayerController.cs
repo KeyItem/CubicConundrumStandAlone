@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        switchManager = GameObject.FindGameObjectWithTag("SwitchManager").GetComponent<SwitchManager>();
+        switchManager = GetComponent<SwitchManager>();
     }
 
 	void Start ()
@@ -150,7 +150,7 @@ public class PlayerController : MonoBehaviour
 
     bool RequestMove (Vector3 requestedPosition)
     {
-        if (!Physics.Raycast(currentPlayer.transform.position, requestedPosition, rayDistance, allMask))
+        if (!Physics.Raycast(currentPlayer.transform.position, requestedPosition, rayDistance, allMask)) //Checks if there is something in the way of movement, if not, return true.
         {
             return true;
         }
@@ -159,6 +159,43 @@ public class PlayerController : MonoBehaviour
             inputDelayTimer = inputDelayTimerInit;
             return false;         
         }
+    }
+
+    bool RequestClimb ()
+    {
+        if (isAttached)
+        {
+            if (isAttachedLeft)
+            {
+                //Draw A Physics CheckBox on Each Corner to see if there is a wall in the way, if not return true;
+                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopLeft
+                {
+                    return true;
+                }
+
+                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //BottomLeft;
+                {
+                    return true;
+                }
+
+                return false;
+            }
+            
+            if (isAttachedRight)
+            {
+                //Draw A Physics CheckBox on Each Corner to see if there is a wall in the way, if not return true;
+                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopRight
+                {
+                    return true;
+                }
+
+                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //BottomRight;
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     bool RequestAttach()
@@ -207,15 +244,23 @@ public class PlayerController : MonoBehaviour
         myRB = currentPlayer.GetComponent<Rigidbody>();
 
         playerRenderer = currentPlayer.GetComponent<Renderer>();
+
+        SelectedOutline();
     }
 
     void SelectedOutline()
     {
+        playerRenderer.material.SetFloat("_Outline", 1);
         playerRenderer.material.SetColor("_OutlineColor", selectedOutlineColor);
     }
 
     void AttachedOutline()
     {
         playerRenderer.material.SetColor("_OutlineColor", attachedOutlineColor);
+    }
+
+    public void RemoveOutline(GameObject target)
+    {
+        target.GetComponent<Renderer>().material.SetFloat("_Outline", 0);
     }
 }

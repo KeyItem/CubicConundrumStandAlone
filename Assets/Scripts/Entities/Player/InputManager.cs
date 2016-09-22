@@ -11,13 +11,17 @@ public class InputManager : MonoBehaviour
     [Header("Controls")]
     public KeyCode Attach;
     public KeyCode Switch;
+    public KeyCode AttachController;
+    public KeyCode SwitchController;
+    public KeyCode Pause;
+    public KeyCode PauseController;
 
 	void Awake ()
     {
         playerController = GetComponent<PlayerController>();
 	}
 	
-	void FixedUpdate ()
+	void Update ()
     {
         CheckForInputs();
 	}
@@ -32,15 +36,19 @@ public class InputManager : MonoBehaviour
             playerController.Move(xAxis, yAxis);
         }
 
-        if (Input.GetKeyDown(Attach))
+        if (Input.GetKeyDown(Attach) || Input.GetKeyDown(AttachController))
         {
             playerController.Attach();
         }
 
-        if (Input.GetKeyDown(Switch))
+        if (Input.GetKeyDown(Switch) || Input.GetKeyDown(SwitchController))
         {
-            // playerController.Switch();
-            playerController.SyncPlayer();
+            playerController.Switch();
+        }
+
+        if (Input.GetKeyDown(Pause) || Input.GetKeyDown(PauseController))
+        {
+
         }
     }
 }
