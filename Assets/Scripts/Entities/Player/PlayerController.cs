@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Debug")]
     public Vector3[] directionVectors;
+    public Vector3 myClimbVec;
     public Renderer playerRenderer;
     public Color selectedOutlineColor;
     public Color attachedOutlineColor;
@@ -88,10 +89,18 @@ public class PlayerController : MonoBehaviour
 
                 if (inputDelayTimer < 0)
                 {
-                    if (RequestMove(Vector3.up))
+                   if (RequestClimb())
                     {
-                        currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
+                        currentPlayer.transform.position += myClimbVec;
                         inputDelayTimer = inputDelayTimerInit;
+                    }
+                    else
+                    {
+                        if (RequestMove(Vector3.up))
+                        {
+                            currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
+                            inputDelayTimer = inputDelayTimerInit;
+                        }
                     }
                 }
             }
@@ -102,10 +111,18 @@ public class PlayerController : MonoBehaviour
 
                 if (inputDelayTimer < 0)
                 {
-                    if (RequestMove(Vector3.down))
+                    if (RequestClimb())
                     {
-                        currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
+                        currentPlayer.transform.position += myClimbVec;
                         inputDelayTimer = inputDelayTimerInit;
+                    }
+                    else
+                    {
+                        if (RequestMove(Vector3.up))
+                        {
+                            currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
+                            inputDelayTimer = inputDelayTimerInit;
+                        }
                     }
                 }
             }
@@ -163,38 +180,27 @@ public class PlayerController : MonoBehaviour
 
     bool RequestClimb ()
     {
-        if (isAttached)
+        int x = 0;
+
+        if (isAttachedLeft)
         {
-            if (isAttachedLeft)
+            x = -1;
+        }
+
+        else if (isAttachedRight)
+        {
+            x = 1;
+        }
+
+        for (int y = -1; y < 2; y += 2)
+        {
+            if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(x, y, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
             {
-                //Draw A Physics CheckBox on Each Corner to see if there is a wall in the way, if not return true;
-                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopLeft
-                {
-                    return true;
-                }
-
-                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //BottomLeft;
-                {
-                    return true;
-                }
-
-                return false;
-            }
-            
-            if (isAttachedRight)
-            {
-                //Draw A Physics CheckBox on Each Corner to see if there is a wall in the way, if not return true;
-                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopRight
-                {
-                    return true;
-                }
-
-                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //BottomRight;
-                {
-                    return true;
-                }
+                myClimbVec = new Vector3(x, y, 0);
+                return true;
             }
         }
+
         return false;
     }
 

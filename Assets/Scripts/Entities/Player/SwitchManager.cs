@@ -5,6 +5,7 @@ using System.Collections.Generic;
 public class SwitchManager : MonoBehaviour
 {
     private PlayerController playerController;
+    private CameraController cameraController;
 
     [Header ("Switch Variables")]
     public int numberOfCubesAvailable;
@@ -18,6 +19,7 @@ public class SwitchManager : MonoBehaviour
     void Awake()
     {
         playerController = GameObject.FindGameObjectWithTag("GodObject").GetComponent<PlayerController>();
+        cameraController = Camera.main.GetComponent<CameraController>();
 
         godObject = gameObject;
 
@@ -76,7 +78,8 @@ public class SwitchManager : MonoBehaviour
 
         cubes[currentCube].transform.SetParent(godObject.transform);
 
-        playerController.SyncPlayer();
+        cameraController.currentTarget = cubes[currentCube].transform;
 
+        playerController.SyncPlayer();
     }
 }
