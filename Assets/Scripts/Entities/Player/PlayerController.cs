@@ -233,9 +233,20 @@ public class PlayerController : MonoBehaviour
             {
                 if (Physics.Raycast(currentPlayer.transform.position, directionVectors[i], moveDistance, attachMask))
                 {
+                    if (i == 0)
+                    {
+                        isAttachedRight = true;
+                        isAttachedLeft = false;
+                    }
+
+                    if (i == 1)
+                    {
+                        isAttachedLeft = true;
+                        isAttachedRight = false;
+                    }
                     return;
                 }
-                if (i+1 == directionVectors.Length) //Thanks to Ryon (Need to confirm on how this works)
+                if (i+1 == directionVectors.Length)
                 {
                     Deattach();
                 }
