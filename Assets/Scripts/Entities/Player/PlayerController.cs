@@ -59,7 +59,7 @@ public class PlayerController : MonoBehaviour
 
             if (inputDelayTimer < 0)
             {
-                if (RequestMove(Vector3.right))
+                if (RequestMove(Vector3.right)) //Try moving.
                 {
                     currentPlayer.transform.position += new Vector3(moveDistance, 0, 0);
                     inputDelayTimer = inputDelayTimerInit;
@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour
 
             if (inputDelayTimer < 0)
             {
-                if (RequestMove(Vector3.left))
+                if (RequestMove(Vector3.left)) //Try moving
                 {
                     currentPlayer.transform.position += new Vector3(-moveDistance, 0, 0);
                     inputDelayTimer = inputDelayTimerInit;
@@ -89,14 +89,14 @@ public class PlayerController : MonoBehaviour
 
                 if (inputDelayTimer < 0)
                 {
-                   if (RequestClimb())
+                   if (RequestClimb("Up")) //Check if you can climb
                     {
                         currentPlayer.transform.position += myClimbVec;
                         inputDelayTimer = inputDelayTimerInit;
                     }
                     else
                     {
-                        if (RequestMove(Vector3.up))
+                        if (RequestMove(Vector3.up)) //If not, try moving.
                         {
                             currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
                             inputDelayTimer = inputDelayTimerInit;
@@ -111,14 +111,14 @@ public class PlayerController : MonoBehaviour
 
                 if (inputDelayTimer < 0)
                 {
-                    if (RequestClimb())
+                    if (RequestClimb("Down")) //Check if you can climb
                     {
                         currentPlayer.transform.position += myClimbVec;
                         inputDelayTimer = inputDelayTimerInit;
                     }
                     else
                     {
-                        if (RequestMove(Vector3.up))
+                        if (RequestMove(Vector3.down)) //If not, try moving.
                         {
                             currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
                             inputDelayTimer = inputDelayTimerInit;
@@ -178,26 +178,55 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    bool RequestClimb ()
+    bool RequestClimb (string direction)
     {
-        int x = 0;
-
         if (isAttachedLeft)
         {
-            x = -1;
-        }
-
-        else if (isAttachedRight)
-        {
-            x = 1;
-        }
-
-        for (int y = -1; y < 2; y += 2)
-        {
-            if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(x, y, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+            if (direction == "Up")
             {
-                myClimbVec = new Vector3(x, y, 0);
-                return true;
+                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                {
+                    myClimbVec = new Vector3(-1, 1, 0);
+                    return true;
+                }
+                return false;
+
+            }
+
+            if (direction == "Down")
+            {
+                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                {
+                    myClimbVec = new Vector3(-1, -1, 0);
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        if (isAttachedRight)
+        {
+            if (direction == "Up")
+            {
+                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                {
+                    myClimbVec = new Vector3(1, 1, 0);
+                    return true;
+                }
+
+                return false;
+            }
+
+            if (direction == "Down")
+            {
+                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                {
+                    myClimbVec = new Vector3(1, -1, 0);
+                    return true;
+                }
+
+                return false;
             }
         }
 
