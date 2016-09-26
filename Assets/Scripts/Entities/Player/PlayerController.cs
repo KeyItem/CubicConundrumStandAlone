@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour
 {
     private Rigidbody myRB;
     private SwitchManager switchManager;
+    public MovementManager moveManager;
 
     [Header("Player")]
     public GameObject currentPlayer;
@@ -14,13 +15,6 @@ public class PlayerController : MonoBehaviour
     public float rayDistance;
     public float inputDelayTimer;
     private float inputDelayTimerInit;
-
-    [Header("Player Booleans")]
-    public bool canMove;
-    public bool canSwitch;
-    public bool isAttached;
-    public bool isAttachedLeft;
-    public bool isAttachedRight;
 
     [Header("Layer Masks")]
     public LayerMask allMask;
@@ -81,7 +75,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (isAttached)
+        if (moveManager.isAttached)
         {
             if (yAxis > 0)
             {
@@ -98,8 +92,11 @@ public class PlayerController : MonoBehaviour
                     {
                         if (RequestMove(Vector3.up)) //If not, try moving.
                         {
-                            currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
-                            inputDelayTimer = inputDelayTimerInit;
+                            if (moveManager.isAttachedLeft || moveManager.isAttachedRight)
+                            {
+                                currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
+                                inputDelayTimer = inputDelayTimerInit;
+                            }
                         }
                     }
                 }
@@ -120,8 +117,11 @@ public class PlayerController : MonoBehaviour
                     {
                         if (RequestMove(Vector3.down)) //If not, try moving.
                         {
-                            currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
-                            inputDelayTimer = inputDelayTimerInit;
+                            if (moveManager.isAttachedLeft || moveManager.isAttachedLeft)
+                            {
+                                currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
+                                inputDelayTimer = inputDelayTimerInit;
+                            }
                         }
                     }
                 }
@@ -132,13 +132,13 @@ public class PlayerController : MonoBehaviour
 
     public void Attach()
     {
-      if (!isAttached)
+      if (!moveManager.isAttached)
         {
            if (RequestAttach())
             {
                 currentPlayer.transform.position = new Vector3(currentPlayer.transform.position.x, Mathf.Round(currentPlayer.transform.position.y), currentPlayer.transform.position.z);
                 AttachedOutline();
-                isAttached = true;
+                moveManager.isAttached = true;
                 myRB.isKinematic = true;
             }
         }
@@ -151,15 +151,17 @@ public class PlayerController : MonoBehaviour
     public void Deattach()
     {
         myRB.isKinematic = false;
-        isAttached = false;
-        isAttachedRight = false;
-        isAttachedLeft = false;
+        moveManager.isAttached = false;
+        moveManager.isAttachedRight = false;
+        moveManager.isAttachedLeft = false;
+        moveManager.wasLeft = false;
+        moveManager.wasRight = false;
         SelectedOutline();
     }
 
     public void Switch()
     {
-        if (canSwitch)
+        if (moveManager.canSwitch)
         {
             switchManager.SwitchCube();
         }
@@ -180,24 +182,30 @@ public class PlayerController : MonoBehaviour
 
     bool RequestClimb (string direction)
     {
-        if (isAttachedLeft)
+        if (moveManager.isAttachedLeft)
         {
-            if (direction == "Up")
+            if (direction == "Up") //Top Left
             {
                 if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
                 {
                     myClimbVec = new Vector3(-1, 1, 0);
+                    moveManager.wasLeft = true;
+                    moveManager.isAttachedLeft = false;
+                    moveManager.wasRight = false;
                     return true;
                 }
                 return false;
 
             }
 
-            if (direction == "Down")
+            if (direction == "Down") //Bottom Left
             {
                 if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
                 {
                     myClimbVec = new Vector3(-1, -1, 0);
+                    moveManager.wasLeft = true;
+                    moveManager.isAttachedLeft = false;
+                    moveManager.wasRight = false;
                     return true;
                 }
 
@@ -205,31 +213,36 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (isAttachedRight)
+        if (moveManager.isAttachedRight)
         {
-            if (direction == "Up")
+            if (direction == "Up") //Top Right
             {
                 if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
                 {
                     myClimbVec = new Vector3(1, 1, 0);
+                    moveManager.wasRight = true;
+                    moveManager.isAttachedRight = false;
+                    moveManager.wasLeft = false;
                     return true;
                 }
 
                 return false;
             }
 
-            if (direction == "Down")
+            if (direction == "Down") //Bottom Right
             {
                 if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
                 {
                     myClimbVec = new Vector3(1, -1, 0);
+                    moveManager.isAttachedRight = false;
+                    moveManager.wasRight = true;
+                    moveManager.wasLeft = false;
                     return true;
                 }
 
                 return false;
             }
         }
-
         return false;
     }
 
@@ -241,12 +254,12 @@ public class PlayerController : MonoBehaviour
             {           
                 if (i == 0)
                 {
-                    isAttachedRight = true;
+                    moveManager.isAttachedRight = true;
                 }
 
                 if (i == 1)
                 {
-                    isAttachedLeft = true;
+                    moveManager.isAttachedLeft = true;
                 }
                 return true;
             }
@@ -256,7 +269,7 @@ public class PlayerController : MonoBehaviour
 
     void CheckForWalls()
     {
-        if (isAttached)
+        if (moveManager.isAttached)
         {
             for (int i = 0; i < directionVectors.Length; i++)
             {
@@ -264,14 +277,14 @@ public class PlayerController : MonoBehaviour
                 {
                     if (i == 0)
                     {
-                        isAttachedRight = true;
-                        isAttachedLeft = false;
+                        moveManager.isAttachedRight = true;
+                        moveManager.isAttachedLeft = false;
                     }
 
                     if (i == 1)
                     {
-                        isAttachedLeft = true;
-                        isAttachedRight = false;
+                        moveManager.isAttachedLeft = true;
+                        moveManager.isAttachedRight = false;
                     }
                     return;
                 }
@@ -288,6 +301,8 @@ public class PlayerController : MonoBehaviour
         currentPlayer = gameObject.transform.GetChild(0).gameObject;
      
         myRB = currentPlayer.GetComponent<Rigidbody>();
+
+        moveManager = currentPlayer.GetComponent<MovementManager>();
 
         playerRenderer = currentPlayer.GetComponent<Renderer>();
 

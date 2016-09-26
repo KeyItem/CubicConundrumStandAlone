@@ -25,14 +25,16 @@ public class SwitchManager : MonoBehaviour
 
         cubeHolder = GameObject.FindGameObjectWithTag("CubeHolder");
 
-        if (numberOfCubesAvailable > 1)
-        {
-            playerController.canSwitch = true;
-        }
+       
     }
 
 	void Start ()
     {
+        if (numberOfCubesAvailable > 1)
+        {
+            playerController.moveManager.canSwitch = true;
+        }
+
         DefineCubeList();
 
         currentCube = 0;
