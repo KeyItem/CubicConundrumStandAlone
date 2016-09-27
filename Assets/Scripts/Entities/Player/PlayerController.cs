@@ -154,8 +154,6 @@ public class PlayerController : MonoBehaviour
         moveManager.isAttached = false;
         moveManager.isAttachedRight = false;
         moveManager.isAttachedLeft = false;
-        moveManager.wasLeft = false;
-        moveManager.wasRight = false;
         SelectedOutline();
     }
 
@@ -182,67 +180,63 @@ public class PlayerController : MonoBehaviour
 
     bool RequestClimb (string direction)
     {
-        if (moveManager.isAttachedLeft)
+        if (direction == "Up")
         {
-            if (direction == "Up") //Top Left
+            if (moveManager.isAttachedLeft)
             {
-                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
-                {
-                    myClimbVec = new Vector3(-1, 1, 0);
-                    moveManager.wasLeft = true;
-                    moveManager.isAttachedLeft = false;
-                    moveManager.wasRight = false;
-                    return true;
-                }
-                return false;
-
+                return true;
             }
 
-            if (direction == "Down") //Bottom Left
+            if (moveManager.isAttachedRight)
             {
-                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
-                {
-                    myClimbVec = new Vector3(-1, -1, 0);
-                    moveManager.wasLeft = true;
-                    moveManager.isAttachedLeft = false;
-                    moveManager.wasRight = false;
-                    return true;
-                }
-
-                return false;
+                return true;
             }
+
+            if (moveManager.isAttached)
+            {
+                if (Physics.Raycast(currentPlayer.transform.position, Vector3.up, rayDistance, attachMask))
+                {
+
+                }
+                return true;
+            }
+
+            return false;
         }
 
-        if (moveManager.isAttachedRight)
+        if (direction == "Down")
         {
-            if (direction == "Up") //Top Right
+            if (moveManager.isAttachedLeft)
             {
-                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
-                {
-                    myClimbVec = new Vector3(1, 1, 0);
-                    moveManager.wasRight = true;
-                    moveManager.isAttachedRight = false;
-                    moveManager.wasLeft = false;
-                    return true;
-                }
-
-                return false;
+                return true;
             }
 
-            if (direction == "Down") //Bottom Right
+            if (moveManager.isAttachedRight)
             {
-                if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
-                {
-                    myClimbVec = new Vector3(1, -1, 0);
-                    moveManager.isAttachedRight = false;
-                    moveManager.wasRight = true;
-                    moveManager.wasLeft = false;
-                    return true;
-                }
-
-                return false;
+                return true;
             }
+
+            if (moveManager.isAttached)
+            {
+                if (Physics.Raycast(currentPlayer.transform.position, Vector3.down, rayDistance, attachMask))
+                {
+                    if (moveManager.wasLeft)
+                    {
+
+                    }
+
+                    if (moveManager.wasRight)
+                    {
+
+                    }
+                }
+               
+
+            }
+
+            return false;
         }
+
         return false;
     }
 
