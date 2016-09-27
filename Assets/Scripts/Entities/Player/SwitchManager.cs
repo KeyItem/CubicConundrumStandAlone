@@ -75,6 +75,7 @@ public class SwitchManager : MonoBehaviour
         }
 
         GameObject previousChild = godObject.transform.GetChild(0).gameObject;
+        previousChild.GetComponent<MovementManager>().isBeingControlled = false;
         previousChild.transform.SetParent(cubeHolder.transform);
         playerController.RemoveOutline(previousChild);
 
