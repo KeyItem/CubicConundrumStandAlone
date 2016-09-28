@@ -47,6 +47,11 @@ public class PlayerController : MonoBehaviour
 
     public void Move(float xAxis, float yAxis)
     {
+        if (xAxis == 0 && yAxis == 0)
+        {
+            inputDelayTimer = 0;
+        }
+
         if (xAxis > 0)
         {
             inputDelayTimer -= Time.deltaTime;

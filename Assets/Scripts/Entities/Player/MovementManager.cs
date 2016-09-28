@@ -28,28 +28,24 @@ public class MovementManager : MonoBehaviour
     {
         if (!isBeingControlled)
         {
-            CheckIfStillAttached();
+            if (!CheckIfStillAttached())
+            {
+                Deattach();
+            }
         }
     }
 
-    void CheckIfStillAttached()
+    bool CheckIfStillAttached()
     {
-        for (int i = 0; i < directionalVecArray.Length; i++)
+        for (int i = 0; i < 4; i++)
         {
-            if (!Physics.Raycast(transform.position, directionalVecArray[i], rayDistance, allMask))
+            if (Physics.Raycast(transform.position, directionalVecArray[i], rayDistance, allMask))
             {
-                break;
-            }
-            else
-            {
-                if (i == 4)
-                {
-                    Deattach();
-                }
-
-                continue;
+                return true;
             }
         }
+
+        return false;
     }
 
     void Deattach()
