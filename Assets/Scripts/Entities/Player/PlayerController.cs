@@ -159,6 +159,8 @@ public class PlayerController : MonoBehaviour
         moveManager.isAttached = false;
         moveManager.isAttachedRight = false;
         moveManager.isAttachedLeft = false;
+        moveManager.wasLeft = false;
+        moveManager.wasRight = false;
         SelectedOutline();
     }
 
@@ -244,6 +246,18 @@ public class PlayerController : MonoBehaviour
 
                         return false;
                     }
+
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    {
+                        myClimbVec = new Vector3(1, 1, 0);
+                        return true;
+                    }
+
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    {
+                        myClimbVec = new Vector3(-1, 1, 0);
+                        return true;
+                    }
                 }
 
                 return false;
@@ -306,6 +320,18 @@ public class PlayerController : MonoBehaviour
                             moveManager.wasLeft = false;
                             return true;
                         }
+                    }
+
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    {
+                        myClimbVec = new Vector3(-1, -1, 0);
+                        return true;
+                    }
+
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    {
+                        myClimbVec = new Vector3(1, -1, 0);
+                        return true;
                     }
                 }
 

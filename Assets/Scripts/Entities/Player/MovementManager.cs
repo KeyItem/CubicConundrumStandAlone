@@ -17,7 +17,7 @@ public class MovementManager : MonoBehaviour
 
     public float rayDistance;
 
-    public LayerMask allMask;
+    public LayerMask attachMask;
 
     void Start()
     {
@@ -39,7 +39,7 @@ public class MovementManager : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            if (Physics.Raycast(transform.position, directionalVecArray[i], rayDistance, allMask))
+            if (Physics.Raycast(transform.position, directionalVecArray[i], rayDistance, attachMask))
             {
                 return true;
             }
