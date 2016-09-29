@@ -23,7 +23,9 @@ public class PlayerController : MonoBehaviour
 
     [Header("Debug")]
     public Vector3[] directionVectors;
+    [Space (10)]
     public Vector3 myClimbVec;
+    [Space(10)]
     public Renderer playerRenderer;
     public Color selectedOutlineColor;
     public Color attachedOutlineColor;
@@ -225,7 +227,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1), Vector3.one * 0.1f, Quaternion.identity, allMask))
                         {
-                            myClimbVec = new Vector3(-1, -1, 0);
+                            myClimbVec = new Vector3(-1, 1, 0);
                             moveManager.wasRight = false;
                             moveManager.wasLeft = false;
                             return true;
@@ -238,7 +240,7 @@ public class PlayerController : MonoBehaviour
                     {
                         if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1), Vector3.one * 0.1f, Quaternion.identity, allMask))
                         {
-                            myClimbVec = new Vector3(1, -1, 0);
+                            myClimbVec = new Vector3(1, 1, 0);
                             moveManager.wasRight = false;
                             moveManager.wasLeft = false;
                             return true;
@@ -266,7 +268,7 @@ public class PlayerController : MonoBehaviour
             return false;
         }
     
-        if (direction == "Down")
+        if (direction == "Down") //GET DOWN
         {
             if (moveManager.isAttachedLeft)
             {
@@ -346,18 +348,18 @@ public class PlayerController : MonoBehaviour
 
     bool RequestAttach()
     {
-        for (int i = 0; i < directionVectors.Length; i++)
+        for (int i = 0; i < 4; i++)
         {
             if (Physics.Raycast(currentPlayer.transform.position, directionVectors[i], moveDistance, attachMask))
             {           
                 if (i == 0)
                 {
-                    moveManager.isAttachedRight = true;
+                    moveManager.isAttachedLeft = true;
                 }
 
                 if (i == 1)
                 {
-                    moveManager.isAttachedLeft = true;
+                    moveManager.isAttachedRight = true;
                 }
                 return true;
             }
@@ -369,29 +371,53 @@ public class PlayerController : MonoBehaviour
     {
         if (moveManager.isAttached)
         {
-            for (int i = 0; i < directionVectors.Length; i++)
+            if (!CheckIfStillAttached())
             {
-                if (Physics.Raycast(currentPlayer.transform.position, directionVectors[i], moveDistance, attachMask))
-                {
-                    if (i == 0)
-                    {
-                        moveManager.isAttachedRight = true;
-                        moveManager.isAttachedLeft = false;
-                    }
+                Deattach();
+            }
 
-                    if (i == 1)
-                    {
-                        moveManager.isAttachedLeft = true;
-                        moveManager.isAttachedRight = false;
-                    }
-                    return;
-                }
-                if (i+1 == directionVectors.Length)
+            if (!moveManager.isAttachedLeft || !moveManager.isAttachedRight)
+            {
+                if (Physics.Raycast(currentPlayer.transform.position, Vector3.left, rayDistance, attachMask))
                 {
-                    Deattach();
+                    moveManager.isAttachedLeft = true;
+                }
+
+                if (Physics.Raycast(currentPlayer.transform.position, Vector3.right, rayDistance, attachMask))
+                {
+                    moveManager.isAttachedRight = true;
                 }
             }
+
+            if (moveManager.isAttachedLeft)
+            {
+                if (!Physics.Raycast(currentPlayer.transform.position, Vector3.left, rayDistance, attachMask))
+                {
+                    moveManager.isAttachedLeft = false;
+                }
+            }
+
+            if (moveManager.isAttachedRight)
+            {
+                if (!Physics.Raycast(currentPlayer.transform.position, Vector3.right, rayDistance, attachMask))
+                {
+                    moveManager.isAttachedRight = false;
+                }
+            }
+        }      
+    }
+
+    bool CheckIfStillAttached()
+    {
+        for (int i = 0; i < 4; i++) //Check all cardinal directions to see if still attached to something, otherwise DeAttach
+        {
+            if (Physics.Raycast(currentPlayer.transform.position, directionVectors[i], rayDistance, attachMask))
+            {
+                return true;
+            }
         }
+
+        return false;
     }
 
     public void SyncPlayer()
