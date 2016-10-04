@@ -3,10 +3,13 @@ using System.Collections;
 
 public class MovementManager : MonoBehaviour
 {
+    private CheckpointManager checkpointManager;
     private Rigidbody myRB;
 
+    [Header("Directional Vectors")]
     public Vector3[] directionalVecArray;
 
+    [Header ("Player Booleans")]
     public bool canSwitch;
     public bool isBeingControlled;
     public bool isAttached;
@@ -15,13 +18,18 @@ public class MovementManager : MonoBehaviour
     public bool wasLeft;
     public bool wasRight;
 
+    [Header ("Player Variables")]
     public float rayDistance;
 
+    [Header ("Layers")]
     public LayerMask attachMask;
+    public LayerMask allMask;
 
     void Start()
     {
         myRB = GetComponent<Rigidbody>();
+
+        checkpointManager = GameObject.FindGameObjectWithTag("CheckpointManager").GetComponent<CheckpointManager>();
     }
 
     void Update()
@@ -55,4 +63,5 @@ public class MovementManager : MonoBehaviour
         isAttachedRight = false;
         isAttachedLeft = false;
     }
+  
 }
