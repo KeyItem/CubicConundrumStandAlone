@@ -248,9 +248,9 @@ public class PlayerController : MonoBehaviour
                 {
                     if (moveManager.wasLeft)
                     {
-                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
                         {
-                            myClimbVec = new Vector3(-1, 1, 0);
+                            myClimbVec = new Vector3(1, 1, 0);
                             moveManager.wasRight = false;
                             moveManager.wasLeft = false;
                             return true;
@@ -261,9 +261,9 @@ public class PlayerController : MonoBehaviour
 
                     if (moveManager.wasRight)
                     {
-                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
                         {
-                            myClimbVec = new Vector3(1, 1, 0);
+                            myClimbVec = new Vector3(-1, 1, 0);
                             moveManager.wasRight = false;
                             moveManager.wasLeft = false;
                             return true;
