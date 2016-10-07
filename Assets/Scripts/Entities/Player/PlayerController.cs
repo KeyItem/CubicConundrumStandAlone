@@ -488,14 +488,14 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            playerRenderer.material.SetFloat("_Outline", 1);
+            playerRenderer.material.SetFloat("_Outline", 2);
             playerRenderer.material.SetColor("_OutlineColor", selectedOutlineColor);
         }
     }
 
     void AttachedOutline()
     {
-        playerRenderer.material.SetFloat("_Outline", 1);
+        playerRenderer.material.SetFloat("_Outline", 2);
         playerRenderer.material.SetColor("_OutlineColor", attachedOutlineColor);
     }
 
