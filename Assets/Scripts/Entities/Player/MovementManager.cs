@@ -3,7 +3,6 @@ using System.Collections;
 
 public class MovementManager : MonoBehaviour
 {
-    private CheckpointManager checkpointManager;
     private Rigidbody myRB;
 
     [Header("Directional Vectors")]
@@ -28,8 +27,6 @@ public class MovementManager : MonoBehaviour
     void Start()
     {
         myRB = GetComponent<Rigidbody>();
-
-        checkpointManager = GameObject.FindGameObjectWithTag("CheckpointManager").GetComponent<CheckpointManager>();
     }
 
     void Update()

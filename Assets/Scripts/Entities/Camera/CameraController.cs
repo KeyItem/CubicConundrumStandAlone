@@ -14,13 +14,12 @@ public class CameraController : MonoBehaviour
 
     private Vector3 velocity = Vector3.zero;
 
-
 	void Start ()
     {
         playerController = GameObject.FindGameObjectWithTag("GodObject").GetComponent<PlayerController>();
 
-        currentTarget = playerController.currentPlayer.transform;      
-	}
+        currentTarget = playerController.currentPlayer.transform;
+    }
 	
 	void FixedUpdate ()
     {
