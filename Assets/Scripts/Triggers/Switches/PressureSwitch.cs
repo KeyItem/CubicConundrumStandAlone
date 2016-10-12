@@ -8,7 +8,8 @@ public class PressureSwitch : MonoBehaviour
     [Header("Color")]
     public string switchColor; //1: Red, 2: Blue, 3: Green, 4: Yellow
 
-    [Header ("Boolean Variables")]
+    [Header("Boolean Variables")]
+    public GameObject targetDoor;
     public bool isPressed;
 
 
@@ -16,6 +17,11 @@ public class PressureSwitch : MonoBehaviour
     {
         objectiveManager = GameObject.FindGameObjectWithTag("ObjectiveManager").GetComponent<ObjectiveManager>();
 	}
+
+    void Update()
+    {
+        RelayInformation();
+    }
 
     void OnTriggerStay(Collider player)
     {
@@ -37,11 +43,13 @@ public class PressureSwitch : MonoBehaviour
     {
         if (isPressed)
         {
-
+            targetDoor.GetComponent<DoorController>().isClosing = false;
+            targetDoor.GetComponent<DoorController>().isOpening = true;
         }
         else
         {
-
+            targetDoor.GetComponent<DoorController>().isOpening = false;
+            targetDoor.GetComponent<DoorController>().isClosing = true;
         }
     }
 	

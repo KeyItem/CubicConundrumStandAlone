@@ -15,6 +15,8 @@ public class InputManager : MonoBehaviour
     public KeyCode SwitchController;
     public KeyCode Pause;
     public KeyCode PauseController;
+    public KeyCode Reset;
+    public KeyCode ResetController;
 
 	void Awake ()
     {
@@ -45,7 +47,12 @@ public class InputManager : MonoBehaviour
 
         if (Input.GetKeyDown(Pause) || Input.GetKeyDown(PauseController))
         {
+            StateManager.PauseGame();
+        }
 
+        if (Input.GetKeyDown(Reset) || Input.GetKeyDown(ResetController))
+        {
+            LevelManager.ReloadCurrentLevel();
         }
     }
 }
