@@ -175,6 +175,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void SwitchHold(string color)
+    {
+        if (moveManager.canSwitch)
+        {
+            switchManager.RequestSwitch(color);
+        }
+    }
+
     bool RequestMove (Vector3 requestedPosition)
     {
         if (!Physics.Raycast(currentPlayer.transform.position, requestedPosition, rayDistance, allMask)) //Checks if there is something in the way of movement, if not, return true.

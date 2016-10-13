@@ -85,4 +85,67 @@ public class SwitchManager : MonoBehaviour
 
         playerController.SyncPlayer();
     }
+
+    public void RequestSwitch(string color)
+    {
+        switch (color)
+        {
+            case "Red":
+                if (currentCube == 0)
+                {
+                    return;
+                }
+                else if (cubes.Contains(GameObject.FindGameObjectWithTag("RedCube")))
+                {
+                    SwitchTo(0);
+                }
+                break;
+            case "Blue":
+                if (currentCube == 1)
+                {
+                    return;
+                }
+                else if (cubes.Contains(GameObject.FindGameObjectWithTag("BlueCube")))
+                {
+                    SwitchTo(1);
+                }
+                break;
+            case "Green":
+                if (currentCube == 2)
+                {
+                    return;
+                }
+                else if (cubes.Contains(GameObject.FindGameObjectWithTag("GreenCube")))
+                {
+                    SwitchTo(2);
+                }
+                break;
+            case "Yellow":
+                if (currentCube == 3)
+                {
+                    return;
+                }
+                else if (cubes.Contains(GameObject.FindGameObjectWithTag("YellowCube")))
+                {
+                    SwitchTo(3);
+                }
+                break;
+        }
+    }
+
+    public void SwitchTo (int cubeNum)
+    {
+        currentCube = cubeNum;
+
+        GameObject previousChild = godObject.transform.GetChild(0).gameObject;
+        previousChild.GetComponent<MovementManager>().isBeingControlled = false;
+        previousChild.transform.SetParent(cubeHolder.transform);
+        playerController.RemoveOutline(previousChild);
+
+        cubes[currentCube].transform.SetParent(godObject.transform);
+
+        cameraController.currentTarget = cubes[currentCube].transform;
+
+        playerController.SyncPlayer();
+    }
 }
