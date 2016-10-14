@@ -68,7 +68,7 @@ public class InputManager : MonoBehaviour
             }
 
             if (Input.GetKeyUp(Switch) || Input.GetKeyUp(SwitchController))
-            {
+            {             
                 if (keyHoldDelay > 0)
                 {
                     playerController.Switch();
@@ -96,36 +96,40 @@ public class InputManager : MonoBehaviour
 
         if (colorSelector)
         {
-            if (xAxis > 0) //Right
+            if (xAxis > 0.9f) //Right
             {
                 playerController.SwitchHold("Yellow");
                 colorSelector = false;
                 lookForInput = true;
                 baseUIManager.DisableColorPicker();
+                keyHoldDelay = keyHoldDelayReset;
             }
 
-            if (xAxis < 0) //Left
+            if (xAxis < -0.9f) //Left
             {
                 playerController.SwitchHold("Green");
                 colorSelector = false;
                 lookForInput = true;
                 baseUIManager.DisableColorPicker();
+                keyHoldDelay = keyHoldDelayReset;
             }
 
-            if (yAxis > 0) //Up
+            if (yAxis > 0.9f) //Up
             {
                 playerController.SwitchHold("Red");
                 colorSelector = false;
                 lookForInput = true;
                 baseUIManager.DisableColorPicker();
+                keyHoldDelay = keyHoldDelayReset;
             }
 
-            if (yAxis < 0) //Down
+            if (yAxis < -0.9f) //Down
             {
                 playerController.SwitchHold("Blue");
                 colorSelector = false;
                 lookForInput = true;
                 baseUIManager.DisableColorPicker();
+                keyHoldDelay = keyHoldDelayReset;
             }
         }
         
