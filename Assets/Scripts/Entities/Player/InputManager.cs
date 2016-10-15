@@ -27,6 +27,7 @@ public class InputManager : MonoBehaviour
     [Header("Booleans")]
     public bool lookForInput;
     public bool colorSelector;
+    public bool justChangedColors;
 
 	void Awake ()
     {
@@ -59,7 +60,7 @@ public class InputManager : MonoBehaviour
             {
                 keyHoldDelay -= Time.deltaTime;
 
-                if (keyHoldDelay < 0)
+                if (keyHoldDelay < 0 && !justChangedColors)
                 {
                     baseUIManager.EnableColorPicker();
                     lookForInput = false;
@@ -68,7 +69,13 @@ public class InputManager : MonoBehaviour
             }
 
             if (Input.GetKeyUp(Switch) || Input.GetKeyUp(SwitchController))
-            {             
+            {
+                if (justChangedColors)
+                {
+                    justChangedColors = false;
+                    return;
+                }
+                             
                 if (keyHoldDelay > 0)
                 {
                     playerController.Switch();
@@ -103,6 +110,7 @@ public class InputManager : MonoBehaviour
                 lookForInput = true;
                 baseUIManager.DisableColorPicker();
                 keyHoldDelay = keyHoldDelayReset;
+                justChangedColors = true;
             }
 
             if (xAxis < -0.9f) //Left
@@ -112,6 +120,7 @@ public class InputManager : MonoBehaviour
                 lookForInput = true;
                 baseUIManager.DisableColorPicker();
                 keyHoldDelay = keyHoldDelayReset;
+                justChangedColors = true;
             }
 
             if (yAxis > 0.9f) //Up
@@ -121,6 +130,7 @@ public class InputManager : MonoBehaviour
                 lookForInput = true;
                 baseUIManager.DisableColorPicker();
                 keyHoldDelay = keyHoldDelayReset;
+                justChangedColors = true;
             }
 
             if (yAxis < -0.9f) //Down
@@ -130,6 +140,7 @@ public class InputManager : MonoBehaviour
                 lookForInput = true;
                 baseUIManager.DisableColorPicker();
                 keyHoldDelay = keyHoldDelayReset;
+                justChangedColors = true;
             }
         }
         
