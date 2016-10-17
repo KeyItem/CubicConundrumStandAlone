@@ -9,12 +9,15 @@ public class PlayerController : MonoBehaviour
 
     [Header("Player")]
     public GameObject currentPlayer;
+    public Animator cubeAnimator;
 
     [Header("Player Variables")]
     public float moveDistance;
     public float rayDistance;
     public float inputDelayTimer;
     private float inputDelayTimerInit;
+    public float idleTimer;
+    private float idleTimerReset;
 
     [Header("Layer Masks")]
     public LayerMask allMask;
@@ -46,6 +49,13 @@ public class PlayerController : MonoBehaviour
 	void Update ()
     {
         CheckForWalls();
+
+        IdleTimer();
+    }
+
+    void IdleTimer()
+    {
+       
     }
 
     public void Move(float xAxis, float yAxis)
@@ -63,6 +73,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (RequestMove(Vector3.right)) //Try moving.
                 {
+                    cubeAnimator.Play("MoveRight", -1, 0f);
                     currentPlayer.transform.position += new Vector3(moveDistance, 0, 0);
                     inputDelayTimer = inputDelayTimerInit;
                 }
@@ -77,6 +88,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (RequestMove(Vector3.left)) //Try moving
                 {
+                    cubeAnimator.Play("MoveLeft", -1, 0f);
                     currentPlayer.transform.position += new Vector3(-moveDistance, 0, 0);
                     inputDelayTimer = inputDelayTimerInit;
                 }
@@ -100,8 +112,15 @@ public class PlayerController : MonoBehaviour
                     {
                         if (RequestMove(Vector3.up)) //If not, try moving.
                         {
-                            if (moveManager.isAttachedLeft || moveManager.isAttachedRight)
+                            if (moveManager.isAttachedLeft)
                             {
+                                cubeAnimator.Play("MoveLeft", -1, 0f);
+                                currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
+                                inputDelayTimer = inputDelayTimerInit;
+                            }
+                            else if (moveManager.isAttachedRight)
+                            {
+                                cubeAnimator.Play("MoveRight", -1, 0f);
                                 currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
                                 inputDelayTimer = inputDelayTimerInit;
                             }
@@ -125,8 +144,15 @@ public class PlayerController : MonoBehaviour
                     {
                         if (RequestMove(Vector3.down)) //If not, try moving.
                         {
-                            if (moveManager.isAttachedLeft || moveManager.isAttachedRight)
+                            if (moveManager.isAttachedLeft)
                             {
+                                cubeAnimator.Play("MoveRight", -1, 0f);
+                                currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
+                                inputDelayTimer = inputDelayTimerInit;
+                            }
+                            else if (moveManager.isAttachedRight)
+                            {
+                                cubeAnimator.Play("MoveLeft", -1, 0f);
                                 currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
                                 inputDelayTimer = inputDelayTimerInit;
                             }
@@ -148,6 +174,7 @@ public class PlayerController : MonoBehaviour
                 AttachedOutline();
                 moveManager.isAttached = true;
                 myRB.isKinematic = true;
+                cubeAnimator.Play("Pulse", -1, 0f);
             }
         }
         else
@@ -204,20 +231,22 @@ public class PlayerController : MonoBehaviour
             {
                 if (Physics.Raycast(currentPlayer.transform.position, Vector3.up, rayDistance, cubeMask))
                 {
-                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopRight
                     {
                         myClimbVec = new Vector3(1, 1, 0);
+                        cubeAnimator.Play("MoveRight", -1, 0f);
                         return true;
                     }
                 }
                 else
                 {
-                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopLeft
                     {
                         moveManager.isAttachedLeft = false;
                         moveManager.wasLeft = true;
                         moveManager.wasRight = false;
                         myClimbVec = new Vector3(-1, 1, 0);
+                        cubeAnimator.Play("MoveLeft", -1, 0f);
                         return true;
                     }
 
@@ -229,20 +258,22 @@ public class PlayerController : MonoBehaviour
             {
                 if (Physics.Raycast(currentPlayer.transform.position, Vector3.up, rayDistance, cubeMask))
                 {
-                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopLeft
                     {
                         myClimbVec = new Vector3(-1, 1, 0);
+                        cubeAnimator.Play("MoveLeft", -1, 0f);
                         return true;
                     }
                 }
                 else
                 {
-                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopRight
                     {
                         moveManager.isAttachedRight = false;
                         moveManager.wasLeft = false;
                         moveManager.wasRight = true;
                         myClimbVec = new Vector3(1, 1, 0);
+                        cubeAnimator.Play("MoveRight", -1, 0f);
                         return true;
                     }
 
@@ -256,19 +287,21 @@ public class PlayerController : MonoBehaviour
                 {
                     if (moveManager.wasLeft)
                     {
-                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopRight
                         {
                             myClimbVec = new Vector3(1, 1, 0);
                             moveManager.wasRight = false;
                             moveManager.wasLeft = false;
+                            cubeAnimator.Play("MoveRight", -1, 0f);
                             return true;
                         }
 
-                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopLeft
                         {
                             myClimbVec = new Vector3(-1, 1, 0);
                             moveManager.wasRight = false;
                             moveManager.wasLeft = false;
+                            cubeAnimator.Play("MoveLeft", -1, 0f);
                             return true;
                         }
 
@@ -277,34 +310,38 @@ public class PlayerController : MonoBehaviour
 
                     if (moveManager.wasRight)
                     {
-                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopLeft
                         {
                             myClimbVec = new Vector3(-1, 1, 0);
                             moveManager.wasRight = false;
                             moveManager.wasLeft = false;
+                            cubeAnimator.Play("MoveLeft", -1, 0f);
                             return true;
                         }
 
-                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopRight
                         {
                             myClimbVec = new Vector3(1, 1, 0);
                             moveManager.wasRight = false;
                             moveManager.wasLeft = false;
+                            cubeAnimator.Play("MoveRight", -1, 0f);
                             return true;
                         }
 
                         return false;
                     }
 
-                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopRight
                     {
                         myClimbVec = new Vector3(1, 1, 0);
+                        cubeAnimator.Play("MoveRight", -1, 0f);
                         return true;
                     }
 
-                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, 1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //TopLeft
                     {
                         myClimbVec = new Vector3(-1, 1, 0);
+                        cubeAnimator.Play("MoveLeft", -1, 0f);
                         return true;
                     }
                 }
@@ -321,20 +358,22 @@ public class PlayerController : MonoBehaviour
             {
                 if (Physics.Raycast(currentPlayer.transform.position, Vector3.down, rayDistance, cubeMask))
                 {
-                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //BottomRight
                     {
                         myClimbVec = new Vector3(1, -1, 0);
+                        cubeAnimator.Play("MoveRight", -1, 0f);
                         return true;
                     }
                 }
                 else
                 {
-                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //BottomLeft
                     {
                         moveManager.isAttachedLeft = false;
                         moveManager.wasLeft = true;
                         moveManager.wasRight = false;
                         myClimbVec = new Vector3(-1, -1, 0);
+                        cubeAnimator.Play("MoveLeft", -1, 0f);
                         return true;
                     }
 
@@ -346,20 +385,22 @@ public class PlayerController : MonoBehaviour
             {
                 if (Physics.Raycast(currentPlayer.transform.position, Vector3.down, rayDistance, cubeMask))
                 {
-                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //Bottomleft
                     {
                         myClimbVec = new Vector3(-1, -1, 0);
+                        cubeAnimator.Play("MoveLeft", -1, 0f);
                         return true;
                     }
                 }
                 else
                 {
-                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //BottomRight
                     {
                         moveManager.isAttachedRight = false;
                         moveManager.wasLeft = false;
                         moveManager.wasRight = true;
                         myClimbVec = new Vector3(1, -1, 0);
+                        cubeAnimator.Play("MoveRight", -1, 0f);
                         return true;
                     }
                 }
@@ -373,35 +414,39 @@ public class PlayerController : MonoBehaviour
                 {
                     if (moveManager.wasLeft)
                     {
-                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //BottomLeft
                         {
                             myClimbVec = new Vector3(-1, -1, 0);
                             moveManager.wasRight = false;
                             moveManager.wasLeft = false;
+                            cubeAnimator.Play("MoveLeft", -1, 0f);
                             return true;
                         }                   
                     }
 
                     if (moveManager.wasRight)
                     {
-                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                        if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //BottomRight
                         {
                             myClimbVec = new Vector3(1, -1, 0);
                             moveManager.wasRight = false;
                             moveManager.wasLeft = false;
+                            cubeAnimator.Play("MoveRight", -1, 0f);
                             return true;
                         }
                     }
 
-                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //Bottomleft
                     {
                         myClimbVec = new Vector3(-1, -1, 0);
+                        cubeAnimator.Play("MoveLeft", -1, 0f);
                         return true;
                     }
 
-                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask))
+                    if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //BottomRight
                     {
                         myClimbVec = new Vector3(1, -1, 0);
+                        cubeAnimator.Play("MoveRight", -1, 0f);
                         return true;
                     }
                 }
@@ -499,7 +544,9 @@ public class PlayerController : MonoBehaviour
 
         moveManager.isBeingControlled = true;
 
-        playerRenderer = currentPlayer.GetComponent<Renderer>();
+        playerRenderer = currentPlayer.transform.GetChild(0).GetComponent<Renderer>();
+
+        cubeAnimator = currentPlayer.transform.GetChild(0).GetComponent<Animator>();
 
         SelectedOutline();
     }
@@ -525,6 +572,6 @@ public class PlayerController : MonoBehaviour
 
     public void RemoveOutline(GameObject target)
     {
-        target.GetComponent<Renderer>().material.SetFloat("_Outline", 0);
+        target.transform.GetChild(0).GetComponent<Renderer>().material.SetFloat("_Outline", 0);
     }
 }
