@@ -4,6 +4,7 @@ using System.Collections;
 public class InputManager : MonoBehaviour
 {
     private PlayerController playerController;
+    private SwitchManager switchManager;
     private BaseUIManager baseUIManager;
 
     [Header("Axis")]
@@ -27,11 +28,11 @@ public class InputManager : MonoBehaviour
     [Header("Booleans")]
     public bool lookForInput;
     public bool colorSelector;
-    public bool justChangedColors;
 
 	void Awake ()
     {
         playerController = GetComponent<PlayerController>();
+        switchManager = GetComponent<SwitchManager>();
         baseUIManager = GameObject.FindGameObjectWithTag("BaseUI").GetComponent<BaseUIManager>();
 
         keyHoldDelayReset = keyHoldDelay;
@@ -60,7 +61,7 @@ public class InputManager : MonoBehaviour
             {
                 keyHoldDelay -= Time.deltaTime;
 
-                if (keyHoldDelay < 0 && !justChangedColors)
+                if (keyHoldDelay < 0)
                 {
                     baseUIManager.EnableColorPicker();
                     lookForInput = false;
@@ -69,24 +70,12 @@ public class InputManager : MonoBehaviour
             }
 
             if (Input.GetKeyUp(Switch) || Input.GetKeyUp(SwitchController))
-            {
-                if (justChangedColors)
-                {
-                    justChangedColors = false;
-                    return;
-                }
-                             
+            {                                       
                 if (keyHoldDelay > 0)
                 {
-                    playerController.Switch();
+                    switchManager.SwitchCube();
                 }
-
-                if (colorSelector)
-                {
-                    lookForInput = true;
-                    colorSelector = false;
-                }
-
+      
                 keyHoldDelay = keyHoldDelayReset;
             }
 
@@ -103,44 +92,33 @@ public class InputManager : MonoBehaviour
 
         if (colorSelector)
         {
+            if (Input.GetKeyUp(Switch) || Input.GetKeyUp(SwitchController))
+            {
+                switchManager.SwitchTo();
+                baseUIManager.DisableColorPicker();
+                lookForInput = true;
+                colorSelector = false;
+                keyHoldDelay = keyHoldDelayReset;
+            }
+
             if (xAxis > 0.9f) //Right
             {
-                playerController.SwitchHold("Yellow");
-                colorSelector = false;
-                lookForInput = true;
-                baseUIManager.DisableColorPicker();
-                keyHoldDelay = keyHoldDelayReset;
-                justChangedColors = true;
+                switchManager.RequestSwitch("Yellow");
             }
 
             if (xAxis < -0.9f) //Left
             {
-                playerController.SwitchHold("Green");
-                colorSelector = false;
-                lookForInput = true;
-                baseUIManager.DisableColorPicker();
-                keyHoldDelay = keyHoldDelayReset;
-                justChangedColors = true;
+                switchManager.RequestSwitch("Green");
             }
 
             if (yAxis > 0.9f) //Up
             {
-                playerController.SwitchHold("Red");
-                colorSelector = false;
-                lookForInput = true;
-                baseUIManager.DisableColorPicker();
-                keyHoldDelay = keyHoldDelayReset;
-                justChangedColors = true;
+                switchManager.RequestSwitch("Red");
             }
 
             if (yAxis < -0.9f) //Down
             {
-                playerController.SwitchHold("Blue");
-                colorSelector = false;
-                lookForInput = true;
-                baseUIManager.DisableColorPicker();
-                keyHoldDelay = keyHoldDelayReset;
-                justChangedColors = true;
+                switchManager.RequestSwitch("Blue");
             }
         }
         

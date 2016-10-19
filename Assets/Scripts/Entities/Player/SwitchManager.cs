@@ -10,7 +10,9 @@ public class SwitchManager : MonoBehaviour
     [Header ("Switch Variables")]
     public int numberOfCubesAvailable;
     public int currentCube;
+    public int targetCube;
 
+    [Header ("Cube List")]
     public List<GameObject> cubes;
 
     public GameObject godObject;
@@ -65,23 +67,26 @@ public class SwitchManager : MonoBehaviour
 
     public void SwitchCube()
     {
-        currentCube++;
-
-        if (currentCube > numberOfCubesAvailable - 1)
+        if (cubes[currentCube].GetComponent<MovementManager>().canSwitch)
         {
-            currentCube = 0;
-        }
+            currentCube++;
 
-        GameObject previousChild = godObject.transform.GetChild(0).gameObject;
-        previousChild.GetComponent<MovementManager>().isBeingControlled = false;
-        previousChild.transform.SetParent(cubeHolder.transform);
-        playerController.RemoveOutline(previousChild);
+            if (currentCube > numberOfCubesAvailable - 1)
+            {
+                currentCube = 0;
+            }
 
-        cubes[currentCube].transform.SetParent(godObject.transform);
+            GameObject previousChild = godObject.transform.GetChild(0).gameObject;
+            previousChild.GetComponent<MovementManager>().isBeingControlled = false;
+            previousChild.transform.SetParent(cubeHolder.transform);
+            playerController.RemoveOutline(previousChild);
 
-        cameraController.currentTarget = cubes[currentCube].transform;
+            cubes[currentCube].transform.SetParent(godObject.transform);
 
-        playerController.SyncPlayer();
+            cameraController.currentTarget = cubes[currentCube].transform;
+
+            playerController.SyncPlayer();
+        }       
     }
 
     public void RequestSwitch(string color)
@@ -95,7 +100,8 @@ public class SwitchManager : MonoBehaviour
                 }
                 else if (cubes.Contains(GameObject.FindGameObjectWithTag("RedCube")))
                 {
-                    SwitchTo(0);
+                    targetCube = 0;
+                    cameraController.currentTarget = cubes[0].transform;
                 }
                 break;
             case "Blue":
@@ -105,7 +111,8 @@ public class SwitchManager : MonoBehaviour
                 }
                 else if (cubes.Contains(GameObject.FindGameObjectWithTag("BlueCube")))
                 {
-                    SwitchTo(1);
+                    targetCube = 1;
+                    cameraController.currentTarget = cubes[1].transform;
                 }
                 break;
             case "Green":
@@ -115,7 +122,8 @@ public class SwitchManager : MonoBehaviour
                 }
                 else if (cubes.Contains(GameObject.FindGameObjectWithTag("GreenCube")))
                 {
-                    SwitchTo(2);
+                    targetCube = 2;
+                    cameraController.currentTarget = cubes[2].transform;
                 }
                 break;
             case "Yellow":
@@ -125,15 +133,16 @@ public class SwitchManager : MonoBehaviour
                 }
                 else if (cubes.Contains(GameObject.FindGameObjectWithTag("YellowCube")))
                 {
-                    SwitchTo(3);
+                    targetCube = 3;
+                    cameraController.currentTarget = cubes[3].transform;
                 }
                 break;
         }
     }
 
-    public void SwitchTo (int cubeNum)
+    public void SwitchTo()
     {
-        currentCube = cubeNum;
+        currentCube = targetCube;
 
         GameObject previousChild = godObject.transform.GetChild(0).gameObject;
         previousChild.GetComponent<MovementManager>().isBeingControlled = false;

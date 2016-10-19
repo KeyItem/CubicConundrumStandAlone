@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
     private Rigidbody myRB;
-    private SwitchManager switchManager;
     public MovementManager moveManager;
 
     [Header("Player")]
@@ -16,8 +16,9 @@ public class PlayerController : MonoBehaviour
     public float rayDistance;
     public float inputDelayTimer;
     private float inputDelayTimerInit;
-    public float idleTimer;
-    private float idleTimerReset;
+
+    [Header("AttachList")]
+    public List<GameObject> attachList;
 
     [Header("Layer Masks")]
     public LayerMask allMask;
@@ -36,8 +37,6 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        switchManager = GetComponent<SwitchManager>();
-
         SyncPlayer();
     }
 
@@ -49,13 +48,6 @@ public class PlayerController : MonoBehaviour
 	void Update ()
     {
         CheckForWalls();
-
-        IdleTimer();
-    }
-
-    void IdleTimer()
-    {
-       
     }
 
     public void Move(float xAxis, float yAxis)
@@ -192,22 +184,6 @@ public class PlayerController : MonoBehaviour
         moveManager.wasLeft = false;
         moveManager.wasRight = false;
         SelectedOutline();
-    }
-
-    public void Switch()
-    {
-        if (moveManager.canSwitch)
-        {
-            switchManager.SwitchCube();
-        }
-    }
-
-    public void SwitchHold(string color)
-    {
-        if (moveManager.canSwitch)
-        {
-            switchManager.RequestSwitch(color);
-        }
     }
 
     bool RequestMove (Vector3 requestedPosition)
@@ -481,7 +457,7 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    void CheckForWalls()
+    void CheckForWalls() //Check if you're still attached to a surface
     {
         if (moveManager.isAttached)
         {
@@ -534,7 +510,7 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    public void SyncPlayer()
+    public void SyncPlayer() //Make Connections.
     {
         currentPlayer = gameObject.transform.GetChild(0).gameObject;
      

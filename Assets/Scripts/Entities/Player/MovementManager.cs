@@ -3,6 +3,7 @@ using System.Collections;
 
 public class MovementManager : MonoBehaviour
 {
+    private PlayerController playerController;
     private Rigidbody myRB;
 
     [Header("Directional Vectors")]
@@ -27,16 +28,15 @@ public class MovementManager : MonoBehaviour
     void Start()
     {
         myRB = GetComponent<Rigidbody>();
+
+        playerController = GameObject.FindGameObjectWithTag("GodObject").GetComponent<PlayerController>();
     }
 
     void Update()
     {
-        if (!isBeingControlled)
+        if (!CheckIfStillAttached())
         {
-            if (!CheckIfStillAttached())
-            {
-                Deattach();
-            }
+            Deattach();
         }
     }
 
@@ -59,6 +59,9 @@ public class MovementManager : MonoBehaviour
         isAttached = false;
         isAttachedRight = false;
         isAttachedLeft = false;
+        wasLeft = false;
+        wasRight = false;
+        
     }
   
 }
