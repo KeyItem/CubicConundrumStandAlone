@@ -23,9 +23,7 @@ public class SwitchManager : MonoBehaviour
 
         godObject = gameObject;
 
-        cubeHolder = GameObject.FindGameObjectWithTag("CubeHolder");
-
-       
+        cubeHolder = GameObject.FindGameObjectWithTag("CubeHolder");       
     }
 
 	void Start ()
