@@ -54,7 +54,7 @@ public class InputManager : MonoBehaviour
 
             if (Input.GetKeyDown(Attach) || Input.GetKeyDown(AttachController))
             {
-                playerController.Attach();
+                playerController.moveManager.Attach();
             }
 
             if (Input.GetKey(Switch) || Input.GetKey(SwitchController))

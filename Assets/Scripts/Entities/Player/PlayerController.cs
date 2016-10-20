@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour
 {
-    private Rigidbody myRB;
     public MovementManager moveManager;
 
     [Header("Player")]
@@ -45,11 +44,6 @@ public class PlayerController : MonoBehaviour
         inputDelayTimerInit = inputDelayTimer;
 	}
 	
-	void Update ()
-    {
-        CheckForWalls();
-    }
-
     public void Move(float xAxis, float yAxis)
     {
         if (xAxis == 0 && yAxis == 0)
@@ -153,37 +147,6 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-    }
-
-
-    public void Attach()
-    {
-      if (!moveManager.isAttached)
-        {
-           if (RequestAttach())
-            {
-                currentPlayer.transform.position = new Vector3(currentPlayer.transform.position.x, Mathf.Round(currentPlayer.transform.position.y), currentPlayer.transform.position.z);
-                AttachedOutline();
-                moveManager.isAttached = true;
-                myRB.isKinematic = true;
-                cubeAnimator.Play("Pulse", -1, 0f);
-            }
-        }
-        else
-        {
-            Deattach();
-        }
-    }
-
-    public void Deattach()
-    {
-        myRB.isKinematic = false;
-        moveManager.isAttached = false;
-        moveManager.isAttachedRight = false;
-        moveManager.isAttachedLeft = false;
-        moveManager.wasLeft = false;
-        moveManager.wasRight = false;
-        SelectedOutline();
     }
 
     bool RequestMove (Vector3 requestedPosition)
@@ -436,86 +399,12 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    bool RequestAttach()
-    {
-        for (int i = 0; i < 4; i++)
-        {
-            if (Physics.Raycast(currentPlayer.transform.position, directionVectors[i], moveDistance, attachMask))
-            {           
-                if (i == 0)
-                {
-                    moveManager.isAttachedLeft = true;
-                }
-
-                if (i == 1)
-                {
-                    moveManager.isAttachedRight = true;
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
-    void CheckForWalls() //Check if you're still attached to a surface
-    {
-        if (moveManager.isAttached)
-        {
-            if (!CheckIfStillAttached())
-            {
-                Deattach();
-            }
-
-            if (!moveManager.isAttachedLeft || !moveManager.isAttachedRight)
-            {
-                if (Physics.Raycast(currentPlayer.transform.position, Vector3.left, rayDistance, attachMask))
-                {
-                    moveManager.isAttachedLeft = true;
-                }
-
-                if (Physics.Raycast(currentPlayer.transform.position, Vector3.right, rayDistance, attachMask))
-                {
-                    moveManager.isAttachedRight = true;
-                }
-            }
-
-            if (moveManager.isAttachedLeft)
-            {
-                if (!Physics.Raycast(currentPlayer.transform.position, Vector3.left, rayDistance, attachMask))
-                {
-                    moveManager.isAttachedLeft = false;
-                }
-            }
-
-            if (moveManager.isAttachedRight)
-            {
-                if (!Physics.Raycast(currentPlayer.transform.position, Vector3.right, rayDistance, attachMask))
-                {
-                    moveManager.isAttachedRight = false;
-                }
-            }
-        }      
-    }
-
-    bool CheckIfStillAttached()
-    {
-        for (int i = 0; i < 4; i++) //Check all cardinal directions to see if still attached to something, otherwise DeAttach
-        {
-            if (Physics.Raycast(currentPlayer.transform.position, directionVectors[i], rayDistance, attachMask))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
+    
 
     public void SyncPlayer() //Make Connections.
     {
         currentPlayer = gameObject.transform.GetChild(0).gameObject;
      
-        myRB = currentPlayer.GetComponent<Rigidbody>();
-
         moveManager = currentPlayer.GetComponent<MovementManager>();
 
         moveManager.isBeingControlled = true;
@@ -527,7 +416,7 @@ public class PlayerController : MonoBehaviour
         SelectedOutline();
     }
 
-    void SelectedOutline()
+    public void SelectedOutline()
     {
         if (moveManager.isAttached)
         {
@@ -540,7 +429,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    void AttachedOutline()
+    public void AttachedOutline()
     {
         playerRenderer.material.SetFloat("_Outline", 2);
         playerRenderer.material.SetColor("_OutlineColor", attachedOutlineColor);
@@ -549,5 +438,10 @@ public class PlayerController : MonoBehaviour
     public void RemoveOutline(GameObject target)
     {
         target.transform.GetChild(0).GetComponent<Renderer>().material.SetFloat("_Outline", 0);
+    }
+
+    public void PlayPulseAnim()
+    {
+        cubeAnimator.Play("Pulse", -1, 0f);
     }
 }
