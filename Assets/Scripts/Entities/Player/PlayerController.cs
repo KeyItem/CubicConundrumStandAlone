@@ -16,6 +16,9 @@ public class PlayerController : MonoBehaviour
     public float inputDelayTimer;
     private float inputDelayTimerInit;
 
+    [Header("Player Booleans")]
+    public bool canMove = true;
+
     [Header("AttachList")]
     public List<GameObject> attachList;
 
@@ -46,107 +49,110 @@ public class PlayerController : MonoBehaviour
 	
     public void Move(float xAxis, float yAxis)
     {
-        if (xAxis == 0 && yAxis == 0)
+        if (canMove)
         {
-            inputDelayTimer = 0;
-        }
-
-        if (xAxis > 0.5f)
-        {
-            inputDelayTimer -= Time.deltaTime;
-
-            if (inputDelayTimer < 0)
+            if (xAxis == 0 && yAxis == 0)
             {
-                if (RequestMove(Vector3.right)) //Try moving.
-                {
-                    cubeAnimator.Play("MoveRight", -1, 0f);
-                    currentPlayer.transform.position += new Vector3(moveDistance, 0, 0);
-                    inputDelayTimer = inputDelayTimerInit;
-                }
+                inputDelayTimer = 0;
             }
-        }
 
-        if (xAxis < -0.5f)
-        {
-            inputDelayTimer -= Time.deltaTime;
-
-            if (inputDelayTimer < 0)
-            {
-                if (RequestMove(Vector3.left)) //Try moving
-                {
-                    cubeAnimator.Play("MoveLeft", -1, 0f);
-                    currentPlayer.transform.position += new Vector3(-moveDistance, 0, 0);
-                    inputDelayTimer = inputDelayTimerInit;
-                }
-            }
-        }
-
-        if (moveManager.isAttached)
-        {
-            if (yAxis > 0.5f)
+            if (xAxis > 0.5f)
             {
                 inputDelayTimer -= Time.deltaTime;
 
                 if (inputDelayTimer < 0)
                 {
-                   if (RequestClimb("Up")) //Check if you can climb
+                    if (RequestMove(Vector3.right)) //Try moving.
                     {
-                        currentPlayer.transform.position += myClimbVec;
+                        cubeAnimator.Play("MoveRight", -1, 0f);
+                        currentPlayer.transform.position += new Vector3(moveDistance, 0, 0);
                         inputDelayTimer = inputDelayTimerInit;
-                    }
-                    else
-                    {
-                        if (RequestMove(Vector3.up)) //If not, try moving.
-                        {
-                            if (moveManager.isAttachedLeft)
-                            {
-                                cubeAnimator.Play("MoveLeft", -1, 0f);
-                                currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
-                                inputDelayTimer = inputDelayTimerInit;
-                            }
-                            else if (moveManager.isAttachedRight)
-                            {
-                                cubeAnimator.Play("MoveRight", -1, 0f);
-                                currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
-                                inputDelayTimer = inputDelayTimerInit;
-                            }
-                        }
                     }
                 }
             }
 
-            if (yAxis < -0.5f)
+            if (xAxis < -0.5f)
             {
                 inputDelayTimer -= Time.deltaTime;
 
                 if (inputDelayTimer < 0)
                 {
-                    if (RequestClimb("Down")) //Check if you can climb
+                    if (RequestMove(Vector3.left)) //Try moving
                     {
-                        currentPlayer.transform.position += myClimbVec;
+                        cubeAnimator.Play("MoveLeft", -1, 0f);
+                        currentPlayer.transform.position += new Vector3(-moveDistance, 0, 0);
                         inputDelayTimer = inputDelayTimerInit;
                     }
-                    else
+                }
+            }
+
+            if (moveManager.isAttached)
+            {
+                if (yAxis > 0.5f)
+                {
+                    inputDelayTimer -= Time.deltaTime;
+
+                    if (inputDelayTimer < 0)
                     {
-                        if (RequestMove(Vector3.down)) //If not, try moving.
+                        if (RequestClimb("Up")) //Check if you can climb
                         {
-                            if (moveManager.isAttachedLeft)
+                            currentPlayer.transform.position += myClimbVec;
+                            inputDelayTimer = inputDelayTimerInit;
+                        }
+                        else
+                        {
+                            if (RequestMove(Vector3.up)) //If not, try moving.
                             {
-                                cubeAnimator.Play("MoveRight", -1, 0f);
-                                currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
-                                inputDelayTimer = inputDelayTimerInit;
+                                if (moveManager.isAttachedLeft)
+                                {
+                                    cubeAnimator.Play("MoveLeft", -1, 0f);
+                                    currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
+                                    inputDelayTimer = inputDelayTimerInit;
+                                }
+                                else if (moveManager.isAttachedRight)
+                                {
+                                    cubeAnimator.Play("MoveRight", -1, 0f);
+                                    currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
+                                    inputDelayTimer = inputDelayTimerInit;
+                                }
                             }
-                            else if (moveManager.isAttachedRight)
+                        }
+                    }
+                }
+
+                if (yAxis < -0.5f)
+                {
+                    inputDelayTimer -= Time.deltaTime;
+
+                    if (inputDelayTimer < 0)
+                    {
+                        if (RequestClimb("Down")) //Check if you can climb
+                        {
+                            currentPlayer.transform.position += myClimbVec;
+                            inputDelayTimer = inputDelayTimerInit;
+                        }
+                        else
+                        {
+                            if (RequestMove(Vector3.down)) //If not, try moving.
                             {
-                                cubeAnimator.Play("MoveLeft", -1, 0f);
-                                currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
-                                inputDelayTimer = inputDelayTimerInit;
+                                if (moveManager.isAttachedLeft)
+                                {
+                                    cubeAnimator.Play("MoveRight", -1, 0f);
+                                    currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
+                                    inputDelayTimer = inputDelayTimerInit;
+                                }
+                                else if (moveManager.isAttachedRight)
+                                {
+                                    cubeAnimator.Play("MoveLeft", -1, 0f);
+                                    currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
+                                    inputDelayTimer = inputDelayTimerInit;
+                                }
                             }
                         }
                     }
                 }
             }
-        }
+        }       
     }
 
     bool RequestMove (Vector3 requestedPosition)
