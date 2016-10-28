@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour
     {
         inputDelayTimerInit = inputDelayTimer;
 	}
-	
+
     public void Move(float xAxis, float yAxis)
     {
         if (canMove)
@@ -157,15 +157,36 @@ public class PlayerController : MonoBehaviour
 
     bool RequestMove (Vector3 requestedPosition)
     {
-        if (!Physics.Raycast(currentPlayer.transform.position, requestedPosition, rayDistance, allMask)) //Checks if there is something in the way of movement, if not, return true.
+        if (moveManager.isAttached)
         {
-            return true;
+            if (!Physics.Raycast(currentPlayer.transform.position, requestedPosition, rayDistance, allMask)) //Checks if there is something in the way of movement, if not, return true.
+            {
+                if (Physics.CheckBox(currentPlayer.transform.position + requestedPosition + new Vector3(0, 1, 0), Vector3.one * 0.1f, Quaternion.identity, attachMask) || Physics.CheckBox(currentPlayer.transform.position + requestedPosition + new Vector3(0, -1, 0), Vector3.one * 0.1f, Quaternion.identity, attachMask))
+                {
+                    return true;
+                }
+
+                inputDelayTimer = inputDelayTimerInit;
+                return false;
+            }
+            else
+            {
+                inputDelayTimer = inputDelayTimerInit;
+                return false;
+            }
         }
         else
         {
-            inputDelayTimer = inputDelayTimerInit;
-            return false;         
-        }
+            if (!Physics.Raycast(currentPlayer.transform.position, requestedPosition, rayDistance, allMask)) //Checks if there is something in the way of movement, if not, return true.
+            {
+                return true;
+            }
+            else
+            {
+                inputDelayTimer = inputDelayTimerInit;
+                return false;
+            }
+        }      
     }
 
     bool RequestClimb (string direction)
@@ -330,6 +351,7 @@ public class PlayerController : MonoBehaviour
             {
                 if (Physics.Raycast(currentPlayer.transform.position, Vector3.down, rayDistance, cubeMask))
                 {
+                   
                     if (!Physics.CheckBox(currentPlayer.transform.position + new Vector3(-1, -1, 0), Vector3.one * 0.1f, Quaternion.identity, allMask)) //Bottomleft
                     {
                         myClimbVec = new Vector3(-1, -1, 0);

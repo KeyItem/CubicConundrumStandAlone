@@ -4,6 +4,8 @@ using System.Collections;
 public class MovementManager : MonoBehaviour
 {
     private PlayerController playerController;
+    private SFXManager sfxManager;
+    private CameraShake3D cameraShake3D;
     private Rigidbody myRB;
 
     [Header("Directional Vectors")]
@@ -17,10 +19,13 @@ public class MovementManager : MonoBehaviour
     public bool isAttachedRight;
     public bool wasLeft;
     public bool wasRight;
+    public bool willCameraShake;
 
     [Header("Player Variables")]
     public GameObject currentPlayer;
     public float rayDistance;
+    public float yVelocity;
+    public float cameraShakeVel;
 
     [Header ("Layers")]
     public LayerMask attachMask;
@@ -31,6 +36,10 @@ public class MovementManager : MonoBehaviour
         myRB = GetComponent<Rigidbody>();
 
         playerController = GameObject.FindGameObjectWithTag("GodObject").GetComponent<PlayerController>();
+
+        cameraShake3D = Camera.main.GetComponent<CameraShake3D>();
+
+        sfxManager = GameObject.FindGameObjectWithTag("SFXManager").GetComponent<SFXManager>();
 
         currentPlayer = playerController.currentPlayer;
     }
@@ -45,6 +54,8 @@ public class MovementManager : MonoBehaviour
         }
 
         CheckForWalls();
+
+        CheckVelocity();
     }
 
     public void Attach()
@@ -58,6 +69,7 @@ public class MovementManager : MonoBehaviour
                 isAttached = true;
                 myRB.isKinematic = true;
                 playerController.PlayPulseAnim();
+                sfxManager.PlaySFX(0);
             }
         }
         else
@@ -154,4 +166,13 @@ public class MovementManager : MonoBehaviour
         return false;
     }
 
+    void CheckVelocity()
+    {
+        yVelocity = myRB.velocity.y;
+
+        if (yVelocity < cameraShakeVel)
+        {
+            willCameraShake = true;
+        }
+    }
 }
