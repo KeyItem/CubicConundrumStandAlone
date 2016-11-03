@@ -3,6 +3,8 @@ using System.Collections;
 
 public class StateManager : MonoBehaviour
 {
+    private BaseUIManager baseUIManager;
+
     public static StateManager stateManager;
 
     public static string state = "Playing";
@@ -12,6 +14,8 @@ public class StateManager : MonoBehaviour
 
 	void Start ()
     {
+        baseUIManager = GameObject.FindGameObjectWithTag("BaseUI").GetComponent<BaseUIManager>();
+
         InstanceManagement();
     }
 	
@@ -36,7 +40,7 @@ public class StateManager : MonoBehaviour
         {
             if (isPaused)
             {
-                Time.timeScale = 1;
+                Time.timeScale = 1;               
                 isPaused = false;
             }
             else

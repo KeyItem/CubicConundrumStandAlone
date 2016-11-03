@@ -7,6 +7,7 @@ public class BaseUIManager : MonoBehaviour
     public static BaseUIManager baseUIManager;
 
     [Header("UI Elements")]
+    public GameObject PauseUI;
     public GameObject colorPickerUI;
 
     [Header ("Booleans")]
@@ -40,17 +41,17 @@ public class BaseUIManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public static void PauseGameUI()
+    public void PauseGameUI()
     {
        if (canPause)
         {
             if (StateManager.isPaused)
             {
-                Debug.Log("Unpausing");
+                PauseUI.SetActive(false);
             }
             else if (!StateManager.isPaused)
             {
-                Debug.Log("Pausing");
+                PauseUI.SetActive(true);
             }
         }
     }
