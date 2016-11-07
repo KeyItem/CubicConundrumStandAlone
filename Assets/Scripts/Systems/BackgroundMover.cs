@@ -7,7 +7,7 @@ public class BackgroundMover : MonoBehaviour
 
     [Header ("Movement Variables")]
     public float moveSpeed;
-    public float moveDelay;
+    private float moveDelay;
     public float moveAmount;
 
     private Vector3 topPos;
@@ -20,7 +20,7 @@ public class BackgroundMover : MonoBehaviour
 
 	void Start () 
     {
-        moveDelay = Random.Range(1, 4);
+        moveDelay = Random.Range(1, 3);
 
         timerClass = new TimerClass();
         timerClass.ResetTimer(moveDelay);

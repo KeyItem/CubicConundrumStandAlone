@@ -67,6 +67,7 @@ public class PlayerController : MonoBehaviour
                         cubeAnimator.Play("MoveRight", -1, 0f);
                         currentPlayer.transform.position += new Vector3(moveDistance, 0, 0);
                         inputDelayTimer = inputDelayTimerInit;
+                        return;
                     }
                 }
             }
@@ -82,6 +83,7 @@ public class PlayerController : MonoBehaviour
                         cubeAnimator.Play("MoveLeft", -1, 0f);
                         currentPlayer.transform.position += new Vector3(-moveDistance, 0, 0);
                         inputDelayTimer = inputDelayTimerInit;
+                        return;
                     }
                 }
             }
@@ -98,6 +100,7 @@ public class PlayerController : MonoBehaviour
                         {
                             currentPlayer.transform.position += myClimbVec;
                             inputDelayTimer = inputDelayTimerInit;
+                            return;
                         }
                         else
                         {
@@ -108,12 +111,14 @@ public class PlayerController : MonoBehaviour
                                     cubeAnimator.Play("MoveLeft", -1, 0f);
                                     currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
                                     inputDelayTimer = inputDelayTimerInit;
+                                    return;
                                 }
                                 else if (moveManager.isAttachedRight)
                                 {
                                     cubeAnimator.Play("MoveRight", -1, 0f);
                                     currentPlayer.transform.position += new Vector3(0, moveDistance, 0);
                                     inputDelayTimer = inputDelayTimerInit;
+                                    return;
                                 }
                             }
                         }
@@ -130,6 +135,7 @@ public class PlayerController : MonoBehaviour
                         {
                             currentPlayer.transform.position += myClimbVec;
                             inputDelayTimer = inputDelayTimerInit;
+                            return;
                         }
                         else
                         {
@@ -140,12 +146,14 @@ public class PlayerController : MonoBehaviour
                                     cubeAnimator.Play("MoveRight", -1, 0f);
                                     currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
                                     inputDelayTimer = inputDelayTimerInit;
+                                    return;
                                 }
                                 else if (moveManager.isAttachedRight)
                                 {
                                     cubeAnimator.Play("MoveLeft", -1, 0f);
                                     currentPlayer.transform.position += new Vector3(0, -moveDistance, 0);
                                     inputDelayTimer = inputDelayTimerInit;
+                                    return;
                                 }
                             }
                         }
