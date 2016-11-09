@@ -41,9 +41,19 @@ public class LevelManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
+    public static void LoadPreviousLevel()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
+    }
+
     public static void BackToMainMenu()
     {
         SceneManager.LoadScene(0);
+    }
+
+    public void BackToMainMenuWrapper()
+    {
+        BackToMainMenu();
     }
 
     public static void LoadLevel (int levelID)

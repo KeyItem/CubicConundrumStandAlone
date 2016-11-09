@@ -28,6 +28,7 @@ public class InputManager : MonoBehaviour
     [Header("Booleans")]
     public bool lookForInput;
     public bool colorSelector;
+    public bool isDevMode;
 
 	void Awake ()
     {
@@ -86,7 +87,40 @@ public class InputManager : MonoBehaviour
 
             if (Input.GetKeyDown(Reset) || Input.GetKeyDown(ResetController))
             {
-                LevelManager.ReloadCurrentLevel();
+                if (StateManager.state != "Paused")
+                {
+                    LevelManager.ReloadCurrentLevel();
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.Keypad5))
+            {
+                if (!isDevMode)
+                {
+                    isDevMode = true;
+                }
+                else if (isDevMode)
+                {
+                    isDevMode = false;
+                }
+            }
+
+            if (isDevMode)
+            {
+                if (Input.GetKeyDown(KeyCode.Keypad1))
+                {
+                    LevelManager.LoadPreviousLevel();
+                }
+
+                if (Input.GetKeyDown(KeyCode.Keypad3))
+                {
+                    LevelManager.LoadNextLevel();
+                }
+
+                if (Input.GetKeyDown(KeyCode.Keypad8))
+                {
+                    LevelManager.BackToMainMenu();
+                }
             }
         }
 
