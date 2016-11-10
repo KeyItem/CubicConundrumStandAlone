@@ -5,7 +5,6 @@ public class MovementManager : MonoBehaviour
 {
     private PlayerController playerController;
     private SFXManager sfxManager;
-    private CameraShake3D cameraShake3D;
     private Rigidbody myRB;
 
     [Header("Directional Vectors")]
@@ -19,15 +18,14 @@ public class MovementManager : MonoBehaviour
     public bool isAttachedRight;
     public bool wasLeft;
     public bool wasRight;
-    public bool willCameraShake;
 
     [Header("Player Variables")]
     public GameObject currentPlayer;
     public float rayDistance;
-    public float yVelocity;
-    public float cameraShakeVel;
 
-    [Header ("Layers")]
+    [Header("Raycast Variables")]
+    public GameObject objectAttachedTo;
+    public RaycastHit rayHit;
     public LayerMask attachMask;
     public LayerMask allMask;
 
@@ -36,8 +34,6 @@ public class MovementManager : MonoBehaviour
         myRB = GetComponent<Rigidbody>();
 
         playerController = GameObject.FindGameObjectWithTag("GodObject").GetComponent<PlayerController>();
-
-        cameraShake3D = Camera.main.GetComponent<CameraShake3D>();
 
         sfxManager = GameObject.FindGameObjectWithTag("SFXManager").GetComponent<SFXManager>();
 
@@ -53,9 +49,7 @@ public class MovementManager : MonoBehaviour
             Deattach();
         }
 
-        CheckForWalls();
-
-        CheckVelocity();
+        CheckForWalls();     
     }
 
     public void Attach()
@@ -82,7 +76,7 @@ public class MovementManager : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            if (Physics.Raycast(currentPlayer.transform.position, directionalVecArray[i], rayDistance, attachMask))
+            if (Physics.Raycast(currentPlayer.transform.position, directionalVecArray[i], out rayHit, rayDistance, attachMask))
             {
                 if (i == 0)
                 {
@@ -164,15 +158,5 @@ public class MovementManager : MonoBehaviour
         }
 
         return false;
-    }
-
-    void CheckVelocity()
-    {
-        yVelocity = myRB.velocity.y;
-
-        if (yVelocity < cameraShakeVel)
-        {
-            willCameraShake = true;
-        }
     }
 }
