@@ -17,11 +17,6 @@ public class SFXManager : MonoBehaviour
         sfxPlayer = GetComponent<AudioSource>();
     }
 	
-	void Update ()
-    {
-	
-	}
-
     void InstanceManagement()
     {
         if (sfxManager != null && sfxManager != this)

@@ -9,6 +9,14 @@ public class MainMenuManager : MonoBehaviour
     [Header("UI Booleans")]
     public bool isOptionsMenuOpen;
 
+    void Start()
+    {
+        if (GameObject.FindGameObjectWithTag("BaseUI"))
+        {
+            Destroy(GameObject.FindGameObjectWithTag("BaseUI"));
+        }
+    }
+
     public void ManageOptionsMenu()
     {
         if (isOptionsMenuOpen)
